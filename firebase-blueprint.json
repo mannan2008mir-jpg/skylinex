@@ -1,0 +1,125 @@
+{
+  "entities": {
+    "ContactSubmission": {
+      "title": "Contact Submission",
+      "description": "Form submissions from users reaching out via the contact form.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full Designation or Name of the sender."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Comm Link / Email address of the sender."
+        },
+        "sector": {
+          "type": "string",
+          "description": "Business sector or category."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Secure line/telephone number."
+        },
+        "message": {
+          "type": "string",
+          "description": "The message payload describing architectural parameters."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server authorization timestamp when the transmission occurred."
+        }
+      },
+      "required": ["name", "email", "message", "createdAt"]
+    },
+    "Booking": {
+      "title": "Blueprint Booking Slot",
+      "description": "Consultation call reservations made via the scheduler.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Human name of the client booking the session."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email identifier for routing the session details."
+        },
+        "selectedDate": {
+          "type": "string",
+          "description": "Target calendar date for the booked blueprint strategy call."
+        },
+        "selectedTimeSlot": {
+          "type": "string",
+          "description": "Selected hourly slot for timezone-compliant reservation."
+        },
+        "message": {
+          "type": "string",
+          "description": "Optional custom message or plan details from the estimator."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server validation timestamp when the slot reservation was locked in."
+        }
+      },
+      "required": ["name", "email", "selectedDate", "selectedTimeSlot", "createdAt"]
+    },
+    "VoiceMemo": {
+      "title": "Voice Memo Submission",
+      "description": "Instant voice note captured from users describing operational bottlenecks.",
+      "type": "object",
+      "properties": {
+        "duration": {
+          "type": "integer",
+          "description": "Total duration of the recorded voice note in seconds."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the submission."
+        }
+      },
+      "required": ["duration", "createdAt"]
+    },
+    "NewsletterSubscription": {
+      "title": "Newsletter Subscription",
+      "description": "Email subscriptions registered for the newsletter or marketing updates.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Staged system email for receiving dispatch routes."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of activation."
+        }
+      },
+      "required": ["email", "createdAt"]
+    }
+  },
+  "firestore": {
+    "contact_submissions/{submissionId}": {
+      "schema": "ContactSubmission",
+      "description": "Collection storing full-parameter contact forms."
+    },
+    "bookings/{bookingId}": {
+      "schema": "Booking",
+      "description": "Collection storing locked blueprint strategy consultation sessions."
+    },
+    "voice_memos/{memoId}": {
+      "schema": "VoiceMemo",
+      "description": "Collection tracking recorded voice notes."
+    },
+    "newsletter_subscriptions/{subId}": {
+      "schema": "NewsletterSubscription",
+      "description": "Collection of staged newsletter system email nodes."
+    }
+  }
+}

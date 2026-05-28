@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Safety Net default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper Primitives
+    function isValidId(id) { 
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); 
+    }
+    
+    function incoming() { 
+      return request.resource.data; 
+    }
+
+    // Validation Blueprint for Contact Submissions
+    function isValidContactSubmission(data) {
+      return data.keys().hasAll(['name', 'email', 'message', 'createdAt'])
+        && data.keys().size() <= 6
+        && data.name is string 
+        && data.name.size() >= 1
+        && data.name.size() <= 200
+        && data.email is string 
+        && data.email.size() >= 3
+        && data.email.size() <= 300
+        && data.message is string 
+        && data.message.size() >= 1
+        && data.message.size() <= 10000
+        && (!data.keys().hasAny(['phone']) || (data.phone is string && data.phone.size() <= 50))
+        && (!data.keys().hasAny(['sector']) || (data.sector is string && data.sector.size() <= 100))
+        && data.createdAt == request.time;
+    }
+
+    // Validation Blueprint for Strategy Call Bookings
+    function isValidBooking(data) {
+      return data.keys().hasAll(['name', 'email', 'selectedDate', 'selectedTimeSlot', 'createdAt'])
+        && data.keys().size() == 5
+        && data.name is string 
+        && data.name.size() >= 1
+        && data.name.size() <= 200
+        && data.email is string 
+        && data.email.size() >= 3
+        && data.email.size() <= 300
+        && data.selectedDate is string 
+        && data.selectedDate.size() >= 5
+        && data.selectedDate.size() <= 50
+        && data.selectedTimeSlot is string 
+        && data.selectedTimeSlot.size() >= 3
+        && data.selectedTimeSlot.size() <= 50
+        && data.createdAt == request.time;
+    }
+
+    // Validation Blueprint for Voice Memos
+    function isValidVoiceMemo(data) {
+      return data.keys().hasAll(['duration', 'createdAt'])
+        && data.keys().size() == 2
+        && data.duration is int
+        && data.duration >= 1
+        && data.duration <= 300
+        && data.createdAt == request.time;
+    }
+
+    // Validation Blueprint for Newsletter Subscriptions
+    function isValidNewsletterSubscription(data) {
+      return data.keys().hasAll(['email', 'createdAt'])
+        && data.keys().size() == 2
+        && data.email is string 
+        && data.email.size() >= 3
+        && data.email.size() <= 300
+        && data.createdAt == request.time;
+    }
+
+    // --- Collections Match Rules ---
+
+    // Contact form submissions matching
+    match /contact_submissions/{submissionId} {
+      allow create: if isValidId(submissionId) && isValidContactSubmission(incoming());
+    }
+
+    // Session bookings scheduling
+    match /bookings/{bookingId} {
+      allow create: if isValidId(bookingId) && isValidBooking(incoming());
+    }
+
+    // Fast voice memos
+    match /voice_memos/{memoId} {
+      allow create: if isValidId(memoId) && isValidVoiceMemo(incoming());
+    }
+
+    // Staged newsletter email subscripts
+    match /newsletter_subscriptions/{subId} {
+      allow create: if isValidId(subId) && isValidNewsletterSubscription(incoming());
+    }
+
+  }
+}

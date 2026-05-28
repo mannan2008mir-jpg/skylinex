@@ -1,0 +1,8 @@
+{
+  "name": "Skyline X",
+  "description": "An ultra-premium, systems-driven business automation agency providing high-fidelity ecosystems for visionary founders and elite enterprises.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
